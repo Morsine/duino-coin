@@ -4,28 +4,10 @@
    )(_) ))(__)(  _)(_  )  (  )(_)((___)( (__  )(_)(  _)(_  )  (
   (____/(______)(____)(_)\_)(_____)     \___)(_____)(____)(_)\_)
   Unfficial code for ESP8266 boards                  version 3.0
-  == Use at your own risk ==
-  
-  Duino-Coin Team & Community 2019-2022 © MIT Licensed
-  https://duinocoin.com
-  https://github.com/revoxhere/duino-coin
-
-  If you don't know where to start, visit official website and navigate to
-  the Getting Started page. Have fun mining!
+  == Use at your own risk, You could get banned for using this ==
 */
 
-/* If optimizations cause problems, change them to -O0 (the default)
-  NOTE: For even better optimizations also edit your Crypto.h file.
-  On linux that file can be found in the following location:
-  ~/.arduino15//packages/esp8266/hardware/esp8266/3.0.2/cores/esp8266/ */
 #pragma GCC optimize ("-Ofast")
-
-/* If during compilation the line below causes a
-  "fatal error: arduinoJson.h: No such file or directory"
-  message to occur; it means that you do NOT have the
-  ArduinoJSON library installed. To install it,
-  go to the below link and follow the instructions:
-  https://github.com/revoxhere/duino-coin/issues/832 */
 #include <ArduinoJson.h>
 
 /* If during compilation the line below causes a
