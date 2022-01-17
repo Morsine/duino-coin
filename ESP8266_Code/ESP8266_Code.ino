@@ -1,10 +1,11 @@
 /*
-   ____  __  __  ____  _  _  _____       ___  _____  ____  _  _ 
+   ____  __  __  ____  _  _  _____       ___  _____  ____  _  _
   (  _ \(  )(  )(_  _)( \( )(  _  )___  / __)(  _  )(_  _)( \( )
-   )(_) ))(__)(  _)(_  )  (  )(_)((___)( (__  )(_)(  _)(_  )  ( 
+   )(_) ))(__)(  _)(_  )  (  )(_)((___)( (__  )(_)(  _)(_  )  (
   (____/(______)(____)(_)\_)(_____)     \___)(_____)(____)(_)\_)
-  Official code for ESP8266 boards                   version 3.0
-
+  Unfficial code for ESP8266 boards                  version 3.0
+  == Use at your own risk ==
+  
   Duino-Coin Team & Community 2019-2022 © MIT Licensed
   https://duinocoin.com
   https://github.com/revoxhere/duino-coin
@@ -14,16 +15,16 @@
 */
 
 /* If optimizations cause problems, change them to -O0 (the default)
-NOTE: For even better optimizations also edit your Crypto.h file.
-On linux that file can be found in the following location:
-~/.arduino15//packages/esp8266/hardware/esp8266/3.0.2/cores/esp8266/ */
+  NOTE: For even better optimizations also edit your Crypto.h file.
+  On linux that file can be found in the following location:
+  ~/.arduino15//packages/esp8266/hardware/esp8266/3.0.2/cores/esp8266/ */
 #pragma GCC optimize ("-Ofast")
 
 /* If during compilation the line below causes a
   "fatal error: arduinoJson.h: No such file or directory"
   message to occur; it means that you do NOT have the
-  ArduinoJSON library installed. To install it, 
-  go to the below link and follow the instructions: 
+  ArduinoJSON library installed. To install it,
+  go to the below link and follow the instructions:
   https://github.com/revoxhere/duino-coin/issues/832 */
 #include <ArduinoJson.h>
 
@@ -44,19 +45,18 @@ using namespace experimental::crypto;
 #include <ESP8266HTTPClient.h>
 #include <WiFiClient.h>
 #include <Ticker.h>
-#include <ESP8266WebServer.h>
 
 namespace {
 // Change the part in brackets to your WiFi name
-const char* SSID = "My cool wifi name";
+const char* SSID = "SSID";
 // Change the part in brackets to your WiFi password
-const char* PASSWORD = "My secret wifi pass";
+const char* PASSWORD = "PASSWORD";
 // Change the part in brackets to your Duino-Coin username
-const char* USERNAME = "my_cool_username";
+const char* USERNAME = "USERNAME";
 // Change the part in brackets if you want to set a custom miner name (use Auto to autogenerate)
-const char* RIG_IDENTIFIER = "Auto";
+const char* RIG_IDENTIFIER = "auto";
 // Change false to true if using 160 MHz clock mode to not get the first share rejected
-const bool USE_HIGHER_DIFF = false;
+const bool USE_HIGHER_DIFF = true;
 
 /* Do not change the lines below. These lines are static and dynamic variables
    that will be used by the program for counters and measurements. */
@@ -71,149 +71,6 @@ float hashrate = 0;
 String AutoRigName = "";
 String host = "";
 String node_id = "";
-
-const char WEBSITE[] PROGMEM = R"=====(
-<!DOCTYPE html>
-<html>
-<!--
-    Duino-Coin self-hosted dashboard
-    MIT licensed
-    Duino-Coin official 2019-2021
-    https://github.com/revoxhere/duino-coin
-    https://duinocoin.com
--->
-
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Duino-Coin @@DEVICE@@ dashboard</title>
-    <link rel="stylesheet" href="https://server.duinocoin.com/assets/css/mystyles.css">
-    <link rel="shortcut icon" href="https://github.com/revoxhere/duino-coin/blob/master/Resources/duco.png?raw=true">
-    <link rel="icon" type="image/png" href="https://github.com/revoxhere/duino-coin/blob/master/Resources/duco.png?raw=true">
-</head>
-
-<body>
-    <section class="section">
-        <div class="container">
-            <h1 class="title">
-                <img class="icon" src="https://github.com/revoxhere/duino-coin/blob/master/Resources/duco.png?raw=true">
-                @@DEVICE@@ <small>(@@ID@@)</small>
-            </h1>
-            <p class="subtitle">
-                Self-hosted, lightweight, official dashboard for your <strong>Duino-Coin</strong> miner
-            </p>
-        </div>
-        <br>
-        <div class="container">
-            <div class="columns">
-                <div class="column">
-                    <div class="box">
-                        <p class="subtitle">
-                            Mining statistics
-                        </p>
-                        <div class="columns is-multiline">
-                            <div class="column" style="min-width:15em">
-                                <div class="title is-size-5 mb-0">
-                                    @@HASHRATE@@kH/s
-                                </div>
-                                <div class="heading is-size-5">
-                                    Hashrate
-                                </div>
-                            </div>
-                            <div class="column" style="min-width:15em">
-                                <div class="title is-size-5 mb-0">
-                                    @@DIFF@@
-                                </div>
-                                <div class="heading is-size-5">
-                                    Difficulty
-                                </div>
-                            </div>
-                            <div class="column" style="min-width:15em">
-                                <div class="title is-size-5 mb-0">
-                                    @@SHARES@@
-                                </div>
-                                <div class="heading is-size-5">
-                                    Shares
-                                </div>
-                            </div>
-                            <div class="column" style="min-width:15em">
-                                <div class="title is-size-5 mb-0">
-                                    @@NODE@@
-                                </div>
-                                <div class="heading is-size-5">
-                                    Node
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="column">
-                    <div class="box">
-                        <p class="subtitle">
-                            Device information
-                        </p>
-                        <div class="columns is-multiline">
-                            <div class="column" style="min-width:15em">
-                                <div class="title is-size-5 mb-0">
-                                    @@DEVICE@@
-                                </div>
-                                <div class="heading is-size-5">
-                                    Device type
-                                </div>
-                            </div>
-                            <div class="column" style="min-width:15em">
-                                <div class="title is-size-5 mb-0">
-                                    @@ID@@
-                                </div>
-                                <div class="heading is-size-5">
-                                    Device ID
-                                </div>
-                            </div>
-                            <div class="column" style="min-width:15em">
-                                <div class="title is-size-5 mb-0">
-                                    @@MEMORY@@
-                                </div>
-                                <div class="heading is-size-5">
-                                    Free memory
-                                </div>
-                            </div>
-                            <div class="column" style="min-width:15em">
-                                <div class="title is-size-5 mb-0">
-                                    @@VERSION@@
-                                </div>
-                                <div class="heading is-size-5">
-                                    Miner version
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <br>
-            <div class="has-text-centered">
-                <div class="title is-size-6 mb-0">
-                    Hosted on
-                    <a href="http://@@IP_ADDR@@">
-                        http://<b>@@IP_ADDR@@</b>
-                    </a>
-                    &bull;
-                    <a href="https://duinocoin.com">
-                        duinocoin.com
-                    </a>
-                    &bull;
-                    <a href="https://github.com/revoxhere/duino-coin">
-                        github.com/revoxhere/duino-coin
-                    </a>
-                </div>
-            </div>
-        </div>
-    </section>
-</body>
-
-</html>
-)=====";
-
-ESP8266WebServer server(80);
 
 void UpdateHostPort(String input) {
   // Thanks @ricaun for the code
@@ -436,24 +293,6 @@ bool max_micros_elapsed(unsigned long current, unsigned long max_elapsed) {
   return false;
 }
 
-void dashboard() {
-  Serial.println("Handling HTTP client");
-
-  String s = WEBSITE;
-  s.replace("@@IP_ADDR@@", WiFi.localIP().toString());
-  
-  s.replace("@@HASHRATE@@", String(hashrate / 1000));
-  s.replace("@@DIFF@@", String(difficulty / 100));
-  s.replace("@@SHARES@@", String(share_count));
-  s.replace("@@NODE@@", String(node_id));
-
-  s.replace("@@DEVICE@@", String(DEVICE));
-  s.replace("@@ID@@", String(RIG_IDENTIFIER));
-  s.replace("@@MEMORY@@", String(ESP.getFreeHeap()));
-  s.replace("@@VERSION@@", String(MINER_VER));
-
-  server.send(200, "text/html", s);
-}
 
 } // namespace
 
@@ -481,14 +320,6 @@ void setup() {
   if (!MDNS.begin(RIG_IDENTIFIER)) {
     Serial.println("mDNS unavailable");
   }
-  MDNS.addService("http", "tcp", 80);
-  Serial.print("Configured mDNS for dashboard on http://" 
-                + String(RIG_IDENTIFIER)
-                + ".local (or http://"
-                + WiFi.localIP().toString()
-                + ")");
-  server.on("/", dashboard);
-  server.begin();
 
   blink(BLINK_SETUP_COMPLETE);
 }
@@ -500,7 +331,6 @@ void loop() {
   // OTA handlers
   VerifyWifi();
   ArduinoOTA.handle();
-  server.handleClient();
 
   ConnectToServer();
   Serial.println("Asking for a new job for user: " + String(USERNAME));
